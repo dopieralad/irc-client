@@ -12,27 +12,17 @@ public class ServerListener {
 
     private final Logger logger;
     private final ServerAdapter serverAdapter;
-    private final ServerProperties serverProperties;
 
     @Autowired
-    public ServerListener(Logger logger, ServerAdapter serverAdapter, ServerProperties serverProperties) {
+    public ServerListener(Logger logger, ServerAdapter serverAdapter) {
         this.logger = logger;
         this.serverAdapter = serverAdapter;
-        this.serverProperties = serverProperties;
     }
 
-    @Scheduled(fixedDelayString = "#{serverProperties.pollingInterval}")
+    @Scheduled(fixedDelay = 1) // Start right after last iteration
     public void listen() throws IOException {
-        int headerLength = Math.toIntExact(serverProperties.getHeaderLength().toBytes());
-        var stream = serverAdapter.getInputStream();
-        int available = stream.available();
-        if (available < headerLength) {
-            return;
-        }
-        var contentLengthBytes = stream.readNBytes(headerLength);
-        var contentLength = Integer.parseInt(new String(contentLengthBytes));
-        var contentBytes = stream.readNBytes(contentLength);
-        var content = new String(contentBytes);
-        logger.info(content);
+        var message = serverAdapter.receive();
+        logger.info(message);
+        serverAdapter.sendAsync(message);
     }
 }

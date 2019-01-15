@@ -1,57 +1,43 @@
 package pl.dopieralad.university.sk2.irc.server;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import java.nio.charset.StandardCharsets;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ServerAdapter implements Closeable {
+public class ServerAdapter {
 
-    private final ServerProperties serverProperties;
+    private final ServerSocket serverSocket;
+    private final int headerLength;
 
-    private Socket socket;
-    private OutputStream outputStream;
-    private InputStream inputStream;
-
-    @Autowired
-    public ServerAdapter(ServerProperties serverProperties) {
-        this.serverProperties = serverProperties;
-
+    public ServerAdapter(ServerSocket serverSocket, ServerProperties serverProperties) {
+        this.serverSocket = serverSocket;
+        this.headerLength = Math.toIntExact(serverProperties.getHeaderLength().toBytes());
     }
 
-    @PostConstruct
-    public void connect() throws IOException {
-        socket = new Socket(serverProperties.getHost(), serverProperties.getPort());
-        outputStream = new BufferedOutputStream(socket.getOutputStream());
-        inputStream = new BufferedInputStream(socket.getInputStream());
+    public void send(String content) throws IOException {
+        var outputStream = serverSocket.getOutputStream();
+        var contentLength = String.valueOf(content.length());
+        var header = StringUtils.leftPad(contentLength, headerLength, "0");
+        var message = header + content;
+        var bytes = message.getBytes(StandardCharsets.UTF_8);
+        outputStream.write(bytes);
     }
 
-    @PreDestroy
-    public void disconnect() throws IOException {
-        this.close();
+    @Async
+    public void sendAsync(String content) throws IOException {
+        send(content);
     }
 
-    @Override
-    public void close() throws IOException {
-        inputStream.close();
-        outputStream.close();
-        socket.close();
-    }
-
-    public OutputStream getOutputStream() {
-        return outputStream;
-    }
-
-    public InputStream getInputStream() {
-        return inputStream;
+    public String receive() throws IOException {
+        var inputStream = serverSocket.getInputStream();
+        var headerBytes = inputStream.readNBytes(headerLength);
+        var header = new String(headerBytes);
+        var contentLength = Integer.parseInt(header);
+        var bytes = inputStream.readNBytes(contentLength);
+        return StringUtils.toEncodedString(bytes, StandardCharsets.UTF_8);
     }
 }

@@ -17,47 +17,24 @@ import org.springframework.validation.annotation.Validated;
 public class ServerProperties {
 
     @NotBlank
-    private String host = "localhost";
+    private final String host = "localhost";
 
     @Positive
     @Max(65535)
-    private int port = 6667;
-
-    @Positive
-    private int pollingInterval = 200;
+    private final int port = 6667;
 
     @DataSizeUnit(DataUnit.BYTES)
-    private DataSize headerLength = DataSize.ofBytes(32);
+    private final DataSize headerLength = DataSize.ofBytes(32);
 
     public String getHost() {
         return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
     }
 
     public int getPort() {
         return port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public int getPollingInterval() {
-        return pollingInterval;
-    }
-
-    public void setPollingInterval(int pollingInterval) {
-        this.pollingInterval = pollingInterval;
-    }
-
     public DataSize getHeaderLength() {
         return headerLength;
-    }
-
-    public void setHeaderLength(DataSize headerLength) {
-        this.headerLength = headerLength;
     }
 }

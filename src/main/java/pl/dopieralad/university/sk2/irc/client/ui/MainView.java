@@ -1,14 +1,18 @@
 package pl.dopieralad.university.sk2.irc.client.ui;
 
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.dopieralad.university.sk2.irc.client.ui.control.MessageSender;
 
+@SpringComponent
 @Route
 public class MainView extends VerticalLayout {
 
-    public MainView() {
-        add(new Button("Click me", e -> Notification.show("Hello Spring+Vaadin user!")));
+    @Autowired
+    public MainView(MessageSender messageSender) {
+        add(messageSender);
     }
+
 }

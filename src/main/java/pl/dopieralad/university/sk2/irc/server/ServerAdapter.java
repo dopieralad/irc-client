@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.util.unit.DataSize;
 
 @Component
 public class ServerAdapter {
@@ -13,9 +15,9 @@ public class ServerAdapter {
     private final ServerSocket serverSocket;
     private final int headerLength;
 
-    public ServerAdapter(ServerSocket serverSocket, ServerProperties serverProperties) {
+    public ServerAdapter(ServerSocket serverSocket, @Value("#{serverProperties.headerLength}") DataSize headerLength) {
         this.serverSocket = serverSocket;
-        this.headerLength = Math.toIntExact(serverProperties.getHeaderLength().toBytes());
+        this.headerLength = Math.toIntExact(headerLength.toBytes());
     }
 
     public void send(String content) throws IOException {

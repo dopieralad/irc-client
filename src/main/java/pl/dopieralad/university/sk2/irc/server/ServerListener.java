@@ -2,27 +2,30 @@ package pl.dopieralad.university.sk2.irc.server;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import pl.dopieralad.university.sk2.irc.object.ObjectDeserializer;
 
 @Component
 public class ServerListener {
 
-    private final Logger logger;
     private final ServerAdapter serverAdapter;
+    private final ObjectDeserializer objectDeserializer;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public ServerListener(Logger logger, ServerAdapter serverAdapter) {
-        this.logger = logger;
+    public ServerListener(ServerAdapter serverAdapter, ObjectDeserializer objectDeserializer, ApplicationEventPublisher eventPublisher) {
         this.serverAdapter = serverAdapter;
+        this.objectDeserializer = objectDeserializer;
+        this.eventPublisher = eventPublisher;
     }
 
     @Scheduled(fixedDelay = 1) // Start right after last iteration
     public void listen() throws IOException {
-        var message = serverAdapter.receive();
-        logger.info(message);
-        serverAdapter.sendAsync(message);
+        var command = serverAdapter.receive();
+        var object = objectDeserializer.deserialize(command);
+        eventPublisher.publishEvent(object);
     }
 }

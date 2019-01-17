@@ -20,7 +20,7 @@ import pl.dopieralad.university.sk2.irc.server.ServerAdapter;
 public class MessageSender extends HorizontalLayout {
 
     private final transient Logger logger;
-    private final ServerAdapter serverAdapter;
+    private final transient ServerAdapter serverAdapter;
 
     @Autowired
     public MessageSender(Logger logger, ServerAdapter serverAdapter) {
@@ -30,7 +30,7 @@ public class MessageSender extends HorizontalLayout {
 
     @PostConstruct
     @SuppressWarnings("unchecked")
-    public void configure() {
+    public void setup() {
         var messageField = new TextField();
         messageField.setSizeFull();
         messageField.setPlaceholder("Message");

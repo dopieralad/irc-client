@@ -17,8 +17,8 @@ import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.dopieralad.university.sk2.irc.client.broadcast.Broadcaster;
 import pl.dopieralad.university.sk2.irc.client.provider.MessageProvider;
-import pl.dopieralad.university.sk2.irc.client.broadcast.AsyncBroadcaster;
 import pl.dopieralad.university.sk2.irc.message.Message;
 
 @SpringComponent
@@ -26,11 +26,11 @@ import pl.dopieralad.university.sk2.irc.message.Message;
 public class MessageDisplay extends ListBox<Message> implements HasSize {
 
     private final MessageProvider messageProvider;
-    private final AsyncBroadcaster<Message> messageBroadcaster;
+    private final Broadcaster<Message> messageBroadcaster;
     private Registration registration;
 
     @Autowired
-    public MessageDisplay(MessageProvider messageProvider, AsyncBroadcaster<Message> messageBroadcaster) {
+    public MessageDisplay(MessageProvider messageProvider, Broadcaster<Message> messageBroadcaster) {
         this.messageProvider = messageProvider;
         this.messageBroadcaster = messageBroadcaster;
     }

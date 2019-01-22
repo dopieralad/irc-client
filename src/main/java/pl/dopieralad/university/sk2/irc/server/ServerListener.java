@@ -1,6 +1,7 @@
 package pl.dopieralad.university.sk2.irc.server;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,6 +27,10 @@ public class ServerListener {
     public void listen() throws IOException {
         var command = serverAdapter.receive();
         var object = objectDeserializer.deserialize(command);
-        eventPublisher.publishEvent(object);
+        if (object instanceof Collection) {
+            ((Collection) object).forEach(eventPublisher::publishEvent);
+        } else {
+            eventPublisher.publishEvent(object);
+        }
     }
 }

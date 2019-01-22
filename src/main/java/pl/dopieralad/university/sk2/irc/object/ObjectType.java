@@ -1,10 +1,12 @@
 package pl.dopieralad.university.sk2.irc.object;
 
+import pl.dopieralad.university.sk2.irc.channel.Channel;
 import pl.dopieralad.university.sk2.irc.message.Message;
 
 public enum ObjectType {
 
-    MESSAGE("message", Message::serialize, Message::deserialize);
+    MESSAGE("message", Message::serialize, Message::deserialize),
+    CHANNEL("get_channels", null, Channel::deserialize);
 
     private final String prefix;
     private final Serializer serializer;

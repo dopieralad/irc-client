@@ -24,7 +24,7 @@ public class ServerProperties {
     private final int port = 6667;
 
     @DataSizeUnit(DataUnit.BYTES)
-    private final DataSize headerLength = DataSize.ofBytes(32);
+    private final DataSize headerLength = DataSize.ofBytes(10);
 
     public String getHost() {
         return host;

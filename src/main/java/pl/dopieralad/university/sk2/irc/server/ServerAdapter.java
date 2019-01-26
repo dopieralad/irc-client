@@ -2,6 +2,7 @@ package pl.dopieralad.university.sk2.irc.server;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import javax.annotation.PreDestroy;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,5 +42,10 @@ public class ServerAdapter {
         var contentLength = Integer.parseInt(header);
         var bytes = inputStream.readNBytes(contentLength);
         return StringUtils.toEncodedString(bytes, StandardCharsets.UTF_8);
+    }
+
+    @PreDestroy
+    public void shutdown() throws IOException {
+        send("/disconnect");
     }
 }

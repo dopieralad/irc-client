@@ -17,24 +17,36 @@ import org.springframework.validation.annotation.Validated;
 public class ServerProperties {
 
     @NotBlank
-    private final String host = "localhost";
+    private String host = "localhost";
 
     @Positive
     @Max(65535)
-    private final int port = 6667;
+    private int port = 6667;
 
     @DataSizeUnit(DataUnit.BYTES)
-    private final DataSize headerLength = DataSize.ofBytes(10);
+    private DataSize headerLength = DataSize.ofBytes(10);
 
     public String getHost() {
         return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public int getPort() {
         return port;
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public DataSize getHeaderLength() {
         return headerLength;
+    }
+
+    public void setHeaderLength(DataSize headerLength) {
+        this.headerLength = headerLength;
     }
 }

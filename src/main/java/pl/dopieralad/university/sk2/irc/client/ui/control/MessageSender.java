@@ -13,19 +13,19 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.dopieralad.university.sk2.irc.message.MessageService;
+import pl.dopieralad.university.sk2.irc.server.ServerAdapter;
 
 @SpringComponent
 @UIScope
 public class MessageSender extends HorizontalLayout {
 
     private final transient Logger logger;
-    private final transient MessageService messageService;
+    private final transient ServerAdapter serverAdapter;
 
     @Autowired
-    public MessageSender(Logger logger, MessageService messageService) {
+    public MessageSender(Logger logger, ServerAdapter serverAdapter) {
         this.logger = logger;
-        this.messageService = messageService;
+        this.serverAdapter = serverAdapter;
     }
 
     @PostConstruct
@@ -49,13 +49,13 @@ public class MessageSender extends HorizontalLayout {
         return event -> {
             try {
                 var message = textField.getValue();
-                messageService.send(message);
+                serverAdapter.send(message);
                 textField.setValue("");
-                textField.focus();
             } catch (IOException e) {
                 logger.error("An error has occurred during message submit!", e);
                 Notification.show("An error has occurred during message submit! Please retry.");
             }
+            textField.focus();
         };
     }
 }

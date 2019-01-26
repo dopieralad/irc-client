@@ -39,10 +39,10 @@ public class ServerAdapter {
         try {
             var inputStream = serverSocket.getInputStream();
             var headerBytes = inputStream.readNBytes(headerLength);
-            var header = new String(headerBytes);
+            var header = new String(headerBytes, StandardCharsets.UTF_8);
             var contentLength = Integer.parseInt(header);
-            var bytes = inputStream.readNBytes(contentLength);
-            return StringUtils.toEncodedString(bytes, StandardCharsets.UTF_8);
+            var contentBytes = inputStream.readNBytes(contentLength);
+            return new String(contentBytes, StandardCharsets.UTF_8);
         } catch (NumberFormatException | SocketException e) {
             restart();
             return receive();
